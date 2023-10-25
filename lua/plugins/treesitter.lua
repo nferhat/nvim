@@ -8,7 +8,7 @@ function M.config()
     local treesitter_configs = require "nvim-treesitter.configs"
 
     treesitter_configs.setup {
-        ensure_installed = { "markdown", "markdown_inline" },
+        ensure_installed = { "markdown", "markdown_inline", "regex", "lua", "vim" },
         sync_install = true,
         auto_install = true,
         highlight = { enable = true },
