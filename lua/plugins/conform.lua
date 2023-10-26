@@ -1,6 +1,14 @@
 local M = {
     "stevearc/conform.nvim",
     init = require("utils").lazy_load "conform.nvim",
+    keys = {
+        {
+            "<leader>F",
+            ":lua require('conform').format()",
+            mode = "n",
+            desc = "Format buffer",
+        },
+    },
 }
 
 M.config = function()
@@ -12,8 +20,6 @@ M.config = function()
             rust = { "rustfmt" },
         },
     }
-    -- Replaces the lsp keymap
-    vim.keymap.set("n", "<leader>F", conform.format, { desc = "Format buffer" })
 
     vim.api.nvim_create_autocmd("BufWritePre", {
         pattern = "*",
