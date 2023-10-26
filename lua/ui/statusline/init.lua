@@ -34,7 +34,4 @@ function M.init()
     vim.opt.statusline = "%!v:lua.require('ui.statusline').draw()"
 end
 
-require("plenary.reload").reload_module "ui.statusline"
-M.init()
-
 return M

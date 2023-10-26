@@ -58,8 +58,4 @@ require("lazy").setup("plugins", {
 })
 
 vim.cmd.colorscheme "theme"
-
-vim.defer_fn(function()
-    -- require("ui.bufferline").init()
-    require("ui.statusline").init()
-end, 0)
+require("ui.statusline").init()
