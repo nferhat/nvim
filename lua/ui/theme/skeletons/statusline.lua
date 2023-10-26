@@ -13,11 +13,14 @@ return {
     Statusline_filetype_default = C.color1,
     Statusline_filetype_name = C.foreground,
 
-    Statusline_linecol = C.foreground,
-    Statusline_lspclients = C.color6,
-    Statusline_git_branch = C.color5,
+    Statusline_lspclients = { fg = C.color6, italic = true },
     Statusline_macro = { fg = C.color3, bold = true },
     Statusline_separator = C.hint,
+
+    Statusline_git_branch_icon = C.color5,
+    Statusline_git_diff_added = C.color2,
+    Statusline_git_diff_changed = C.color4,
+    Statusline_git_diff_removed = C.color1,
 
     Statusline_misc_text = { fg = C.comment, italic = true },
     Statusline_text = C.foreground,

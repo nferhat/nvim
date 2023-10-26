@@ -15,14 +15,15 @@ function M.draw()
     local stopper = highlight_text("Statusline", "")
 
     local statusline = table.concat({
-        comps.git_branch(),
         comps.lspclients(),
         comps.diagnostics(),
         comps.navic(),
         highlight_text("Statusline", "%="),
+        comps.git_branch(),
+        comps.git_diff(),
         comps.noice(),
         comps.filetype(),
-        highlight_text("Statusline_linecol", "%l:%c"),
+        highlight_text("Statusline_text", "%3l:%-2c"),
         "  ",
     }, stopper)
 

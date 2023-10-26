@@ -15,12 +15,13 @@ M.diagnostics = function()
 
     local errors, warnings, hint, info = "0", "0", "0", "0"
 
-    warnings = highlight_text("DiagnosticWarn", tostring(warning_count))
-    errors = highlight_text("DiagnosticError", tostring(error_count))
-    info = highlight_text("DiagnosticInfo", tostring(info_count))
-    hint = highlight_text("DiagnosticHint", tostring(hint_count))
+    errors = highlight_text("DiagnosticError", "!" .. tostring(error_count))
+    warnings = highlight_text("DiagnosticWarn", "*" .. tostring(warning_count))
+    info = highlight_text("DiagnosticInfo", "+" .. tostring(info_count))
+    hint = highlight_text("DiagnosticHint", "-" .. tostring(hint_count))
 
-    return highlight_text("Statusline_separator", "[")
+    return "  "
+        .. highlight_text("Statusline_separator", "[")
         .. table.concat({ errors, warnings, info, hint }, " ")
         .. highlight_text("Statusline_separator", "]")
 end
@@ -42,17 +43,13 @@ M.lspclients = function()
 
     local ret = table.concat(attached_clients_name, ", ")
 
-    return "  "
-        .. highlight_text("Statusline_misc_text", "LSP ")
-        .. highlight_text("Statusline_separator", "[")
-        .. highlight_text("Statusline_lspclients", ret)
-        .. highlight_text("Statusline_separator", "]")
+    return "  " .. highlight_text("Statusline_lspclients", " ") .. highlight_text("Statusline_text", ret)
 end
 
 M.noice = function()
     local noice = package.loaded["noice"]
     if not noice then
-        return
+        return ""
     end
 
     if noice.api.statusline.mode.has() then
@@ -64,20 +61,33 @@ M.noice = function()
 end
 
 M.git_branch = function()
-    if not (vim.b.gitsigns_head or vim.b.gitsigns_git_status) or vim.o.columns < 80 then
+    if vim.o.columns < 100 or not vim.b.gitsigns_status_dict then
+        return ""
+    end
+    local branch = vim.b.gitsigns_status_dict.head
+    return highlight_text("Statusline_git_branch_icon", " ") .. highlight_text("Statusline_text", branch) .. "  "
+end
+
+M.git_diff = function()
+    if not vim.b.gitsigns_status_dict then
         return ""
     end
 
-    if vim.b.gitsigns_status_dict.head == "" then
-        return ""
-    end
+    local added = highlight_text("Statusline_git_diff_added", "+" .. tostring(vim.b.gitsigns_status_dict.added))
+    local changed = highlight_text("Statusline_git_diff_changed", "~" .. tostring(vim.b.gitsigns_status_dict.changed))
+    local removed = highlight_text("Statusline_git_diff_removed", "-" .. tostring(vim.b.gitsigns_status_dict.removed))
 
-    return "  "
-        .. highlight_text("Statusline_git_branch", " ")
-        .. highlight_text("Statusline_filename", vim.b.gitsigns_status_dict.head)
+    return highlight_text("Statusline_separator", "[")
+        .. table.concat({ added, changed, removed }, " ")
+        .. highlight_text("Statusline_separator", "]")
+        .. "  "
 end
 
 M.filetype = function()
+    if vim.o.columns < 70 then
+        return ""
+    end
+
     local devicons = require "nvim-web-devicons"
     local current_buf_name = vim.api.nvim_buf_get_name(0)
     local icon, hl = devicons.get_icon(current_buf_name)
