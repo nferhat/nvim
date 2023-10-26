@@ -35,7 +35,6 @@ O.splitbelow = true
 O.splitright = true
 O.pumwidth = 20
 O.guifont = "monospace:h10"
-O.stc = "%=%{v:relnum?v:relnum:v:lnum}%s"
 O.winblend = 7
 O.pumblend = 7
 O.shortmess:append "sIc" -- disable nvim intro + completion messages
