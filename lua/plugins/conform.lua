@@ -4,7 +4,7 @@ local M = {
     keys = {
         {
             "<leader>F",
-            ":lua require('conform').format()",
+            ":lua require('conform').format()<CR>",
             mode = "n",
             desc = "Format buffer",
         },
