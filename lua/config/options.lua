@@ -38,5 +38,7 @@ O.guifont = "monospace:h10"
 O.winblend = 7
 O.pumblend = 7
 O.shortmess:append "sIc" -- disable nvim intro + completion messages
+O.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
+O.list = true -- shows hidden stuff like tabs
 O.whichwrap:append "<>[]hl" -- move to next/prev lines with hl
 O.clipboard:append { "unnamed", "unnamedplus" } -- system clipboard
