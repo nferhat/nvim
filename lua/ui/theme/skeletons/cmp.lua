@@ -1,7 +1,7 @@
 local C = require "ui.theme.colors"
 
 return {
-    CmpItemSelected = { bg = C.selection },
+    CmpItemSelected = { bg = C.selection, bold = true },
     -- Client item kinds, the following are builtin to cmp.
     CmpItemAbbrDeprecated = { fg = C.color7, strikethrough = true },
     CmpItemAbbrMatchFuzzy = { link = "CmpItemAbbrMatch" },
