@@ -25,8 +25,7 @@ function M.draw()
         comps.git_branch(),
         comps.git_diff(),
         comps.filetype(),
-        highlight_text("Statusline_text", "%3l:%-2c"),
-        "  ",
+        highlight_text("Statusline_linecol", " %03.3l:%03.3c "),
     }, stopper)
 
     return statusline

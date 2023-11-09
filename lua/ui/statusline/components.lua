@@ -36,8 +36,8 @@ M.mode_colors = {
 ---@return string
 M.mode = function()
     local mode = M.mode_colors[vim.api.nvim_get_mode().mode]
-    local ret = highlight_text(mode[2], mode[1]:lower())
-    return "  " .. ret
+    local ret = highlight_text(mode[2], " " .. mode[1]:lower() .. " ")
+    return ret
 end
 
 M.diagnostics = function()
@@ -53,12 +53,12 @@ M.diagnostics = function()
 
     local errors, warnings, hint, info = "0", "0", "0", "0"
 
-    errors = highlight_text("DiagnosticError", "!" .. tostring(error_count))
-    warnings = highlight_text("DiagnosticWarn", "*" .. tostring(warning_count))
-    info = highlight_text("DiagnosticInfo", "+" .. tostring(info_count))
-    hint = highlight_text("DiagnosticHint", "-" .. tostring(hint_count))
+    errors = highlight_text("Statusline_diagnostic_error", "!" .. tostring(error_count))
+    warnings = highlight_text("Statusline_diagnostic_warn", "*" .. tostring(warning_count))
+    info = highlight_text("Statusline_diagnostic_info", "+" .. tostring(info_count))
+    hint = highlight_text("Statusline_diagnostic_hint", "-" .. tostring(hint_count))
 
-    return "  "
+    return " "
         .. highlight_text("Statusline_separator", "[")
         .. table.concat({ errors, warnings, info, hint }, " ")
         .. highlight_text("Statusline_separator", "]")
@@ -82,7 +82,7 @@ M.lspclients = function()
 
     local ret = table.concat(attached_clients_name, ", ")
 
-    return "  " .. highlight_text("Statusline_lspclients", " ") .. highlight_text("Statusline_text", ret)
+    return " " .. highlight_text("Statusline_lspclients", " ") .. highlight_text("Statusline_text", ret)
 end
 
 M.noice = function()
@@ -93,7 +93,7 @@ M.noice = function()
 
     if noice.api.statusline.mode.has() then
         local macro_name = string.match(noice.api.statusline.mode.get(), ".*(@.)")
-        return highlight_text("Statusline_text", "Recording ") .. highlight_text("Macro", macro_name) .. "  "
+        return highlight_text("Statusline_text", "Recording ") .. highlight_text("Macro", macro_name) .. " "
     else
         return ""
     end
@@ -104,7 +104,8 @@ M.git_branch = function()
         return ""
     end
     local branch = vim.b.gitsigns_status_dict.head
-    return highlight_text("Statusline_git_branch_icon", " ") .. highlight_text("Statusline_text", branch) .. "  "
+    branch = branch == "" and "no branch?" or branch
+    return highlight_text("Statusline_git_branch_icon", " ") .. highlight_text("Statusline_text", branch) .. " "
 end
 
 M.git_diff = function()
@@ -119,7 +120,7 @@ M.git_diff = function()
     return highlight_text("Statusline_separator", "[")
         .. table.concat({ added, changed, removed }, " ")
         .. highlight_text("Statusline_separator", "]")
-        .. "  "
+        .. " "
 end
 
 M.filename = function()
@@ -130,30 +131,19 @@ M.filename = function()
     local highlight = (vim.bo.modified and "Statusline_filename_modified")
         or (vim.bo.readonly and "Statusline_filename_readonly")
         or "Statusline_filename_normal"
-    return "  " .. highlight_text("Statusline_misc_text", filepath) .. highlight_text(highlight, fname)
+    return " " .. highlight_text("Statusline_misc_text", filepath) .. highlight_text(highlight, fname)
 end
 
 M.filetype = function()
-    if vim.o.columns < 70 then
+    if vim.o.columns < 60 then
         return ""
     end
 
-    local devicons = require "nvim-web-devicons"
-    local current_buf_name = vim.api.nvim_buf_get_name(0)
-    local icon, hl = devicons.get_icon(current_buf_name)
-
-    local ft = vim.bo.ft
-    ft = ft == "" and "none" or ft
-
-    if icon == nil then
-        return highlight_text("Statusline_text", " " .. ft) .. "  "
-    else
-        return highlight_text(hl, icon) .. highlight_text("Statusline_text", " " .. ft) .. "  "
-    end
+    return highlight_text("Statusline_text", vim.bo.ft) .. " "
 end
 
 M.navic = function()
-    if vim.o.columns < 120 or vim.fn.expand "%" == "" then
+    if vim.o.columns < 140 or vim.fn.expand "%" == "" then
         return ""
     end
 
