@@ -63,3 +63,9 @@ set_keymap("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search
 set_keymap("n", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
 set_keymap("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
 set_keymap("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
+
+-- Keep vim clipboard separate from actual system clipboard
+set_keymap("x", "<leader>p", [["_dp]], { desc = "Paste from system clipboard" })
+set_keymap("x", "<leader>P", [["_dP]], { desc = "Paste from system clipboard" })
+set_keymap("x", "<leader>y", [["+y]], { desc = "Yank to system clipboard" })
+set_keymap("x", "<leader>Y", [["+Y]], { desc = "Yank to system clipboard" })
