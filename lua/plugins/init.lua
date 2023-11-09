@@ -1,17 +1,14 @@
+local utils = require "utils"
+
 return {
     { "junegunn/vim-easy-align", cmd = "EasyAlign" },
     { "famiu/bufdelete.nvim", keys = { { "<leader>x", ":Bdelete!<CR>", desc = "Close buffer" } } },
-    { "nvim-tree/nvim-web-devicons" },
 
     {
         "NvChad/nvim-colorizer.lua",
-        init = require("utils").lazy_load "nvim-colorizer.lua",
-        config = function()
-            require("colorizer").setup { css = true }
-            vim.defer_fn(function()
-                require("colorizer").attach_to_buffer(0)
-            end, 0)
-        end,
+        init = utils.lazy_load "nvim-colorizer.lua",
+        opts = { css = true }, -- all css selectors.
+        config = true,
     },
 
     {
@@ -74,7 +71,14 @@ return {
     },
 
     {
-        "numToStr/Comment.nvim",
+        "JoosepAlviste/nvim-ts-context-commentstring",
+        lazy = true,
+        opts = {
+            enable_autocmd = false,
+        },
+    },
+    {
+        "echasnovski/mini.comment",
         keys = {
             { "gcc", mode = "n", desc = "Comment toggle current line" },
             { "gc", mode = { "n", "o" }, desc = "Comment toggle linewise" },
@@ -83,54 +87,35 @@ return {
             { "gb", mode = { "n", "o" }, desc = "Comment toggle blockwise" },
             { "gb", mode = "x", desc = "Comment toggle blockwise (visual)" },
         },
-        dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
-        config = true,
         opts = {
-            padding = true,
-            sticky = true,
-            ignore = nil,
-            mappings = { basic = true, extra = true },
-            pre_hook = function(...)
-                local supported_ft = {
-                    "javascript",
-                    "typescript",
-                    "typescriptreact",
-                    "css",
-                    "scss",
-                    "html",
-                    "svelte",
-                    "vue",
-                    "graphql",
-                    "lua",
-                }
-                -- Only use ts-context-comment-string for supported filetypes.
-                if vim.tbl_contains(supported_ft, vim.bo.filetype) then
-                    return require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook()(...)
-                else
-                    return nil
-                end
-            end,
+            options = {
+                custom_commentstring = function()
+                    return require("ts_context_commentstring.internal").calculate_commentstring()
+                        or vim.bo.commentstring
+                end,
+            },
         },
     },
 
     {
         "lukas-reineke/indent-blankline.nvim",
-        init = require("utils").lazy_load "indent-blankline.nvim",
+        init = utils.lazy_load "indent-blankline.nvim",
         main = "ibl",
-        config = function()
+        opts = {
+            indent = {
+                char = "│",
+                highlight = "IndentGuide",
+                smart_indent_cap = true,
+            },
+            scope = {
+                enabled = true,
+                highlight = "IndentGuideScope",
+                char = "│",
+            },
+        },
+        config = function(_, opts)
             require("ui.theme").load_skeleton "indent-blankline"
-            require("ibl").setup {
-                indent = {
-                    char = "│",
-                    highlight = "IndentGuide",
-                    smart_indent_cap = true,
-                },
-                scope = {
-                    enabled = true,
-                    highlight = "IndentGuideScope",
-                    char = "│",
-                },
-            }
+            require("ibl").setup(opts)
         end,
     },
 
@@ -163,41 +148,9 @@ return {
     },
 
     {
-        "lewis6991/gitsigns.nvim",
-        init = function()
-            -- load gitsigns only when a git file is opened
-            vim.api.nvim_create_autocmd({ "BufRead" }, {
-                group = vim.api.nvim_create_augroup("GitSignsLazyLoad", { clear = true }),
-                callback = function()
-                    vim.fn.system("git -C " .. '"' .. vim.fn.expand "%:p:h" .. '"' .. " rev-parse")
-                    if vim.v.shell_error == 0 then
-                        vim.api.nvim_del_augroup_by_name "GitSignsLazyLoad"
-                        vim.schedule(function()
-                            require("lazy").load { plugins = { "gitsigns.nvim" } }
-                        end)
-                    end
-                end,
-            })
-        end,
-        opts = {
-            signs = {
-                add = { text = "┃" },
-                change = { text = "┃" },
-                delete = { text = "┃" },
-                topdelete = { text = "┃" },
-                changedelete = { text = "┃" },
-                untracked = { text = "┃" },
-            },
-        },
-        config = function(_, opts)
-            require("gitsigns").setup(opts)
-            require("ui.theme").load_skeleton "gitsigns"
-        end,
-    },
-
-    {
         "alexghergh/nvim-tmux-navigation",
-        lazy = not (os.getenv "TMUX" ~= nil),
+        cond = os.getenv "TMUX" ~= nil,
+        lazy = false,
         config = true,
         opts = {
             keybindings = {
@@ -252,22 +205,18 @@ return {
     {
         "stevearc/dressing.nvim",
         event = "VeryLazy",
-        config = function()
-            local dressing = require "dressing"
-
-            dressing.setup {
-                input = { enabled = false }, -- managed by noice.nvim
-                select = {
-                    -- Override vim.ui.select() hook
-                    enabled = true,
-                    backend = { "telescope", "builtin" },
-                    telescope = {
-                        layout_strategy = "horizontal_edit",
-                        layout_config = { width = 0.5, height = 0.3 },
-                    },
+        opts = {
+            input = { enabled = false }, -- managed by noice.nvim
+            select = {
+                -- Override vim.ui.select() hook
+                enabled = true,
+                backend = { "telescope", "builtin" },
+                telescope = {
+                    layout_strategy = "horizontal_edit",
+                    layout_config = { width = 0.5, height = 0.3 },
                 },
-            }
-        end,
+            },
+        },
     },
 
     {
